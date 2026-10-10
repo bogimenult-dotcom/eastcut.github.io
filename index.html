@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>East Cut Barbershop - Booking & Pricelist</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500 selection:text-black">
+
+    <!-- TOP BAR ADMIN & SHARE -->
+    <header class="sticky top-0 z-50 bg-zinc-900/90 backdrop-blur-md border-b border-zinc-800">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-black font-extrabold text-xl shadow-lg shadow-amber-500/20">
+                    EC
+                </div>
+                <div>
+                    <h1 id="brandNameDisplay" class="font-bold text-lg leading-tight tracking-wider uppercase text-amber-500">East Cut</h1>
+                    <p class="text-xs text-zinc-400">CS: <span id="brandPhoneDisplay">082134996297</span></p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2">
+                <button onclick="openBookingLinkModal()" class="bg-zinc-800 hover:bg-zinc-700 text-amber-400 px-3 py-2 rounded-lg text-xs font-semibold flex items-center space-x-1 border border-amber-500/30 transition">
+                    <i class="fa-solid fa-link"></i>
+                    <span class="hidden sm:inline">Link Tautan</span>
+                </button>
+                <button onclick="verifyAdminAccess()" class="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-lg text-xs font-bold flex items-center space-x-1 shadow-lg shadow-amber-500/20 transition">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Panel Admin (082134996297)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative py-16 px-4 bg-gradient-to-b from-zinc-900 to-zinc-950 border-b border-zinc-800/80">
+        <div class="max-w-4xl mx-auto text-center space-y-4">
+            <span class="inline-block bg-amber-500/10 text-amber-400 text-xs font-semibold px-3 py-1 rounded-full border border-amber-500/20 uppercase tracking-widest">
+                <i class="fa-solid fa-crown mr-1"></i> Premium Gentleman Grooming
+            </span>
+            <h2 id="heroTitle" class="text-4xl md:text-6xl font-extrabold tracking-tight">
+                TAMPIL <span class="text-amber-500">BERKELAS</span> SETIAP HARI
+            </h2>
+            <p id="heroSubtitle" class="text-zinc-400 text-sm md:text-base max-w-xl mx-auto">
+                Demi kenyamanan bersama silahkan boking terlebih dahulu, kami sangat menghargai waktu anda[cite: 1].
+            </p>
+            <div class="pt-2 flex flex-wrap justify-center gap-3">
+                <a href="#bookingSection" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-3 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center space-x-2">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Booking Sekarang</span>
+                </a>
+                <a href="#pricelistSection" class="bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-semibold px-6 py-3 rounded-xl border border-zinc-700 transition flex items-center space-x-2">
+                    <i class="fa-solid fa-receipt"></i>
+                    <span>Lihat Pricelist</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 py-12 space-y-16">
+
+        <!-- SECTION: PILIH KAPSTER -->
+        <section id="barbersSection" class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-zinc-800 pb-4">
+                <div>
+                    <span class="text-amber-500 text-xs font-bold uppercase tracking-wider">Profesional Kami</span>
+                    <h3 class="text-2xl font-bold tracking-tight">Pilih Kapster Andalan</h3>
+                </div>
+                <p class="text-xs text-zinc-400 mt-1 md:mt-0">Klik kapster untuk langsung memilih jadwal booking.</p>
+            </div>
+
+            <div id="barbersListContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <!-- Rendered by JS -->
+            </div>
+        </section>
+
+        <!-- SECTION: BOOKING FORM -->
+        <section id="bookingSection" class="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 md:p-10 shadow-2xl max-w-3xl mx-auto backdrop-blur-sm">
+            <div class="text-center space-y-2 mb-8">
+                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-2xl flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-scissors"></i>
+                </div>
+                <h3 class="text-2xl font-bold">Formulir Booking Online</h3>
+                <p class="text-xs text-zinc-400">Pilih layanan, kapster, tanggal, dan waktu kedatangan Anda.</p>
+            </div>
+
+            <form id="bookingForm" onsubmit="handleBookingSubmit(event)" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Nama Lengkap</label>
+                        <input type="text" id="customerName" required placeholder="Contoh: Budi Santoso" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Nomor WhatsApp</label>
+                        <input type="tel" id="customerPhone" required placeholder="Contoh: 081234567890" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Pilih Kapster</label>
+                        <select id="selectBarber" onchange="onBarberChange()" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition">
+                            <!-- Rendered by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Tanggal Kedatangan</label>
+                        <input type="date" id="bookingDate" required onchange="updateAvailableTimes()" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition text-zinc-300">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-400 mb-2 uppercase tracking-wider">Pilih Layanan Cukur / Treatment</label>
+                    <div id="bookingServicesContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-60 overflow-y-auto p-2 bg-zinc-950/50 border border-zinc-800 rounded-xl">
+                        <!-- Checkboxes rendered by JS -->
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider">Pilih Jam (Otomatis +30 Menit jika terisi)</label>
+                        <span id="slotInfoNotice" class="text-xs text-amber-400 font-medium"></span>
+                    </div>
+                    <select id="bookingTimeSlot" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 transition font-mono">
+                        <option value="">-- Pilih kapster & tanggal dulu --</option>
+                    </select>
+                </div>
+
+                <div class="bg-zinc-950 border border-zinc-800/80 rounded-2xl p-4 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs text-zinc-400">Total Estimasi Biaya</span>
+                        <div id="estimatedTotalDisplay" class="text-xl font-extrabold text-amber-500">Rp 0</div>
+                    </div>
+                    <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3 rounded-xl transition shadow-lg shadow-amber-500/20 flex items-center space-x-2">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Konfirmasi & Kirim WA</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SECTION: PRICELIST & MENU -->
+        <section id="pricelistSection" class="space-y-8 pt-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-zinc-800 pb-4">
+                <div>
+                    <span class="text-amber-500 text-xs font-bold uppercase tracking-wider">Daftar Harga & Treatment</span>
+                    <h3 class="text-3xl font-extrabold tracking-tight">Pricelist East Cut</h3>
+                </div>
+                <p class="text-xs text-zinc-400 mt-1 md:mt-0">*Home services x2 harga diatas[cite: 1]. Free analisis AI model rambut & perawatan[cite: 1].</p>
+            </div>
+
+            <!-- Categories Grid -->
+            <div id="pricelistContainer" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Rendered by JS -->
+            </div>
+
+            <!-- PROMO CARD -->
+            <div class="bg-gradient-to-r from-amber-500/10 via-zinc-900 to-zinc-900 border border-amber-500/30 rounded-3xl p-6 md:p-8 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 text-amber-500/5 text-9xl font-extrabold pointer-events-none">
+                    PROMO
+                </div>
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-amber-500 text-black rounded-xl flex items-center justify-center font-bold text-lg">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-amber-400 uppercase tracking-wide">Special Promos & Discounts</h4>
+                </div>
+                <ul id="promoListContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-300">
+                    <!-- Rendered by JS -->
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-zinc-900 border-t border-zinc-800 py-12 px-4 mt-20 text-center text-xs text-zinc-500 space-y-3">
+        <div class="flex items-center justify-center space-x-2">
+            <div class="w-6 h-6 rounded-lg bg-amber-500 flex items-center justify-center text-black font-bold text-xs">EC</div>
+            <span class="font-bold text-zinc-300 uppercase tracking-widest">East Cut Barbershop</span>
+        </div>
+        <p>Demi kenyamanan bersama silahkan boking terlebih dahulu, kami sangat menghargai waktu anda[cite: 1].</p>
+        <p>Kontak WhatsApp CS: <span class="text-amber-400 font-bold">082134996297</span></p>
+        <p>&copy; 2026 East Cut Barbershop. All rights reserved.</p>
+    </footer>
+
+    <!-- MODAL: LINK TAUTAN BOOKING -->
+    <div id="bookingLinkModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-3">
+                <h3 class="font-bold text-lg text-amber-400 flex items-center space-x-2">
+                    <i class="fa-solid fa-link"></i>
+                    <span>Tautan Cepat Booking</span>
+                </h3>
+                <button onclick="closeBookingLinkModal()" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-zinc-400">Bagikan tautan ini ke pelanggan Anda agar bisa langsung melakukan booking online:</p>
+            <div class="flex items-center space-x-2">
+                <input type="text" id="shareableLinkInput" readonly class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-300 font-mono">
+                <button onclick="copyShareableLink()" class="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-xl text-xs font-bold transition">Salin</button>
+            </div>
+            <div class="pt-2 flex justify-end">
+                <button onclick="closeBookingLinkModal()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2 rounded-xl text-xs font-semibold">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PANEL ADMIN (TERPROTEKSI KHUSUS 082134996297) -->
+    <div id="adminModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-3xl w-full p-6 md:p-8 space-y-6 shadow-2xl my-8">
+            <div class="flex justify-between items-center border-b border-zinc-800 pb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-amber-500 text-black rounded-xl flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-amber-400">Panel Admin East Cut</h3>
+                        <p class="text-xs text-zinc-400">Hanya dapat dikelola oleh pemilik nomor 082134996297.</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="text-zinc-400 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div class="flex border-b border-zinc-800 space-x-4 text-xs font-bold overflow-x-auto">
+                <button onclick="switchAdminTab('generalTab')" id="btnGeneralTab" class="pb-2 border-b-2 border-amber-500 text-amber-500 transition whitespace-nowrap">Info Kontak</button>
+                <button onclick="switchAdminTab('barbersTab')" id="btnBarbersTab" class="pb-2 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition whitespace-nowrap">Kapster & Jadwal</button>
+                <button onclick="switchAdminTab('pricelistTab')" id="btnPricelistTab" class="pb-2 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition whitespace-nowrap">Menu & Harga</button>
+                <button onclick="switchAdminTab('bookingsTab')" id="btnBookingsTab" class="pb-2 border-b-2 border-transparent text-zinc-400 hover:text-zinc-200 transition whitespace-nowrap">Data Booking (<span id="adminBookingCount">0</span>)</button>
+            </div>
+
+            <!-- TAB 0: GENERAL / KONTAK -->
+            <div id="contentGeneralTab" class="space-y-4">
+                <h4 class="text-sm font-bold text-zinc-300">Pengaturan Nomor WhatsApp Admin</h4>
+                <div>
+                    <label class="text-xs text-zinc-400 uppercase font-bold">Nomor WhatsApp Tujuan Booking</label>
+                    <input type="text" id="adminContactPhone" value="082134996297" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 text-sm text-zinc-200 font-mono mt-1">
+                </div>
+            </div>
+
+            <!-- TAB 1: KAPSTER -->
+            <div id="contentBarbersTab" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-bold text-zinc-300">Daftar Kapster & Jam Mulai</h4>
+                    <button onclick="addBarberItem()" class="bg-amber-500 hover:bg-amber-400 text-black px-3 py-1.5 rounded-lg text-xs font-bold">+ Tambah Kapster</button>
+                </div>
+                <div id="adminBarbersContainer" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <!-- TAB 2: PRICELIST -->
+            <div id="contentPricelistTab" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-bold text-zinc-300">Kelola Menu Pricelist & Promo</h4>
+                    <button onclick="addPricelistItem()" class="bg-amber-500 hover:bg-amber-400 text-black px-3 py-1.5 rounded-lg text-xs font-bold">+ Tambah Item Menu</button>
+                </div>
+                <div id="adminPricelistContainer" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <!-- TAB 3: BOOKINGS DATA -->
+            <div id="contentBookingsTab" class="space-y-4 hidden">
+                <div class="flex justify-between items-center">
+                    <h4 class="text-sm font-bold text-zinc-300">Riwayat Booking Masuk</h4>
+                    <button onclick="clearAllBookings()" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold border border-red-500/30">Hapus Semua Riwayat</button>
+                </div>
+                <div id="adminBookingsContainer" class="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-zinc-800 flex justify-end space-x-3">
+                <button onclick="resetDataToDefault()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-4 py-2 rounded-xl text-xs font-semibold">Reset Default</button>
+                <button onclick="saveAdminChanges()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-bold">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const defaultData = {
+            contactPhone: '082134996297',
+            barbers: [
+                {
+                    id: 'rizky',
+                    name: 'Rizky',
+                    specialty: 'Fade & Classic Cut',
+                    availableTime: '10:00',
+                    photo: '' 
+                },
+                {
+                    id: 'madan',
+                    name: 'Madan',
+                    specialty: 'Modern Styling & Beard Trim',
+                    availableTime: '12:00',
+                    photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600'
+                }
+            ],
+            pricelist: [
+                {
+                    category: 'Hair Cut',
+                    items: [
+                        { name: 'Haircut Only', price: 40000, duration: 30, desc: 'Professional haircut with styling' },
+                        { name: 'Cut and wash', price: 45000, duration: 45, desc: 'Haircut + refreshing hair wash' },
+                        { name: 'Skin Fade', price: 50000, duration: 45, desc: 'Clean precise skin fade haircut' },
+                        { name: 'Longtrim', price: 50000, duration: 45, desc: 'Detailed trimming for long hair' },
+                        { name: 'Bald Fade / Botak', price: 30000, duration: 30, desc: 'Clean bald shave look' }
+                    ]
+                },
+                {
+                    category: 'Hair Treatments',
+                    items: [
+                        { name: 'Basic Color / Semir', price: 55000, duration: 60, desc: 'Standard hair coloring' },
+                        { name: 'Coloring + Bleach', price: 170000, duration: 90, desc: 'Full bleach and custom color' },
+                        { name: 'Highlight', price: 200000, duration: 90, desc: 'Stylish hair highlighting' },
+                        { name: 'Curly / Wavy Perm', price: 170000, duration: 90, desc: 'Permanent curl or wave styling' },
+                        { name: 'Down Perm', price: 80000, duration: 60, desc: 'Side hair down perm for neat look' },
+                        { name: 'Rootlift', price: 40000, duration: 45, desc: 'Volume booster for hair roots' },
+                        { name: 'Smoothing', price: 170000, duration: 90, desc: 'Straight and smooth hair treatment' },
+                        { name: 'HairSpa', price: 30000, duration: 45, desc: 'Relaxing scalp and hair nourishment' },
+                        { name: 'Creambath', price: 50000, duration: 45, desc: 'Traditional relaxing creambath' }
+                    ]
+                }
+            ],
+            promos: [
+                "Rating ⭐ 5 Gmaps potongan 5k",
+                "Cukur 5x Gratis 1x",
+                "Cukur 2 Gratis 1",
+                "Follow ig & Tiktok potongan 5k"
+            ],
+            bookings: []
+        };
+
+        let appData = JSON.parse(localStorage.getItem('eastCutData')) || defaultData;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateBrandDisplay();
+            renderBarbers();
+            renderPricelist();
+            renderPromos();
+            populateBarberSelect();
+            populateBookingServices();
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('bookingDate');
+            dateInput.value = todayStr;
+            dateInput.min = todayStr;
+
+            document.getElementById('shareableLinkInput').value = window.location.href.split('#')[0];
+        });
+
+        function saveData() {
+            localStorage.setItem('eastCutData', JSON.stringify(appData));
+        }
+
+        function updateBrandDisplay() {
+            document.getElementById('brandPhoneDisplay').innerText = appData.contactPhone;
+            document.getElementById('adminContactPhone').value = appData.contactPhone;
+        }
+
+        function renderBarbers() {
+            const container = document.getElementById('barbersListContainer');
+            container.innerHTML = appData.barbers.map(b => `
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex items-center space-x-4 hover:border-amber-500/50 transition group">
+                    <div class="w-16 h-16 rounded-2xl overflow-hidden bg-zinc-800 border border-zinc-700 flex-shrink-0 flex items-center justify-center">
+                        ${b.photo ? `<img src="${b.photo}" alt="${b.name}" class="w-full h-full object-cover">` : `<span class="text-amber-500 font-extrabold text-xl">${b.name.charAt(0)}</span>`}
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-lg text-white group-hover:text-amber-400 transition">${b.name}</h4>
+                            <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">
+                                <i class="fa-regular fa-clock mr-1"></i> Available ${b.availableTime} WIB
+                            </span>
+                        </div>
+                        <p class="text-xs text-zinc-400 mt-1">${b.specialty}</p>
+                        <button onclick="selectBarberQuick('${b.id}')" class="mt-3 text-xs font-bold text-amber-500 hover:text-amber-400 flex items-center space-x-1">
+                            <span>Pilih Kapster Ini</span> <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectBarberQuick(barberId) {
+            document.getElementById('selectBarber').value = barberId;
+            onBarberChange();
+            document.getElementById('bookingSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function renderPricelist() {
+            const container = document.getElementById('pricelistContainer');
+            container.innerHTML = appData.pricelist.map(cat => `
+                <div class="bg-zinc-900/60 border border-zinc-800 rounded-3xl p-6 space-y-4">
+                    <div class="border-b border-zinc-800 pb-3 flex items-center justify-between">
+                        <h4 class="font-bold text-lg text-amber-400">${cat.category}</h4>
+                        <span class="text-xs text-zinc-500 font-mono">${cat.items.length} Menu</span>
+                    </div>
+                    <div class="space-y-3">
+                        ${cat.items.map(item => `
+                            <div class="flex justify-between items-start border-b border-zinc-800/40 pb-3 last:border-0 last:pb-0">
+                                <div>
+                                    <h5 class="font-semibold text-sm text-zinc-200">${item.name}</h5>
+                                    <p class="text-xs text-zinc-400">${item.desc} (${item.duration} mnt)</p>
+                                </div>
+                                <span class="font-bold text-amber-500 text-sm whitespace-nowrap ml-4">Rp ${item.price.toLocaleString('id-ID')}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPromos() {
+            const container = document.getElementById('promoListContainer');
+            container.innerHTML = appData.promos.map(p => `
+                <li class="flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-check text-amber-500"></i>
+                    <span>${p}</span>
+                </li>
+            `).join('');
+        }
+
+        function populateBarberSelect() {
+            const select = document.getElementById('selectBarber');
+            select.innerHTML = `<option value="">-- Pilih Kapster --</option>` + appData.barbers.map(b => `
+                <option value="${b.id}">${b.name} (Available: ${b.availableTime} WIB)</option>
+            `).join('');
+        }
+
+        function populateBookingServices() {
+            const container = document.getElementById('bookingServicesContainer');
+            let allServices = [];
+            appData.pricelist.forEach(cat => {
+                cat.items.forEach(item => {
+                    allServices.push({ ...item, category: cat.category });
+                });
+            });
+
+            container.innerHTML = allServices.map((s, idx) => `
+                <label class="flex items-start space-x-3 p-2.5 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-amber-500/40 cursor-pointer transition">
+                    <input type="checkbox" name="bookingService" value="${s.name}" data-price="${s.price}" data-duration="${s.duration}" onchange="calculateEstimatedTotal()" class="mt-1 rounded border-zinc-700 bg-zinc-950 text-amber-500 focus:ring-amber-500">
+                    <div class="flex-1 text-xs">
+                        <div class="font-bold text-zinc-200">${s.name}</div>
+                        <div class="text-zinc-400">Rp ${s.price.toLocaleString('id-ID')} • ${s.duration} mnt</div>
+                    </div>
+                </label>
+            `).join('');
+        }
+
+        function calculateEstimatedTotal() {
+            const checkboxes = document.querySelectorAll('input[name="bookingService"]:checked');
+            let total = 0;
+            checkboxes.forEach(cb => {
+                total += parseInt(cb.getAttribute('data-price'));
+            });
+            document.getElementById('estimatedTotalDisplay').innerText = `Rp ${total.toLocaleString('id-ID')}`;
+        }
+
+        function onBarberChange() {
+            updateAvailableTimes();
+        }
+
+        function updateAvailableTimes() {
+            const barberId = document.getElementById('selectBarber').value;
+            const dateStr = document.getElementById('bookingDate').value;
+            const slotSelect = document.getElementById('bookingTimeSlot');
+            const notice = document.getElementById('slotInfoNotice');
+
+            if (!barberId || !dateStr) {
+                slotSelect.innerHTML = `<option value="">-- Pilih kapster & tanggal dulu --</option>`;
+                notice.innerText = '';
+                return;
+            }
+
+            const barber = appData.barbers.find(b => b.id === barberId);
+            if (!barber) return;
+
+            let [baseHour, baseMinute] = barber.availableTime.split(':').map(Number);
+            let startTimeInMinutes = baseHour * 60 + baseMinute;
+
+            let allSlots = [];
+            let currentMin = startTimeInMinutes;
+            let closeMin = 21 * 60;
+
+            while (currentMin <= closeMin) {
+                let h = Math.floor(currentMin / 60);
+                let m = currentMin % 60;
+                let timeStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')} WIB`;
+                allSlots.push(timeStr);
+                currentMin += 30;
+            }
+
+            let bookedTimes = appData.bookings
+                .filter(b => b.barberId === barberId && b.date === dateStr)
+                .map(b => b.timeSlot);
+
+            slotSelect.innerHTML = '';
+            let firstAvailableAssigned = false;
+
+            allSlots.forEach(slot => {
+                const isBooked = bookedTimes.includes(slot);
+                const opt = document.createElement('option');
+                opt.value = slot;
+
+                if (isBooked) {
+                    opt.textContent = `${slot} (Sudah dibooking)`;
+                    opt.disabled = true;
+                    opt.className = 'text-zinc-600 bg-zinc-950';
+                } else {
+                    if (!firstAvailableAssigned) {
+                        opt.textContent = `${slot} (AVAILABLE - Disarankan)`;
+                        opt.selected = true;
+                        firstAvailableAssigned = true;
+                    } else {
+                        opt.textContent = `${slot} (Available)`;
+                    }
+                }
+                slotSelect.appendChild(opt);
+            });
+
+            if (bookedTimes.length > 0) {
+                notice.innerText = `Slot sebelumnya terisi, otomatis diarahkan ke 30 menit berikutnya.`;
+            } else {
+                notice.innerText = `Jadwal utama kapster tersedia.`;
+            }
+        }
+
+        function handleBookingSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
+            const barberId = document.getElementById('selectBarber').value;
+            const barberObj = appData.barbers.find(b => b.id === barberId);
+            const date = document.getElementById('bookingDate').value;
+            const timeSlot = document.getElementById('bookingTimeSlot').value;
+
+            const checkboxes = document.querySelectorAll('input[name="bookingService"]:checked');
+            if (checkboxes.length === 0) {
+                Swal.fire('Perhatian', 'Pilih minimal 1 layanan cukur atau treatment!', 'warning');
+                return;
+            }
+
+            let selectedServices = [];
+            let totalPrice = 0;
+            checkboxes.forEach(cb => {
+                selectedServices.push(cb.value);
+                totalPrice += parseInt(cb.getAttribute('data-price'));
+            });
+
+            const newBooking = {
+                id: 'BOOK-' + Date.now().toString().slice(-6),
+                name,
+                phone,
+                barberId,
+                barberName: barberObj.name,
+                date,
+                timeSlot,
+                services: selectedServices,
+                totalPrice,
+                createdAt: new Date().toLocaleString('id-ID')
+            };
+
+            appData.bookings.push(newBooking);
+            saveData();
+
+            let waNumber = appData.contactPhone.replace(/^0/, '62');
+            let waText = `Halo East Cut Barbershop, saya ingin konfirmasi booking online:%0n` +
+                         `- ID: *${newBooking.id}*%0n` +
+                         `- Nama: *${name}*%0n` +
+                         `- No HP: *${phone}*%0n` +
+                         `- Kapster: *${barberObj.name}*%0n` +
+                         `- Tanggal: *${date}*%0n` +
+                         `- Jam: *${timeSlot}*%0n` +
+                         `- Layanan: *${selectedServices.join(', ')}*%0n` +
+                         `- Total: *Rp ${totalPrice.toLocaleString('id-ID')}*%0n%0n` +
+                         `Terima kasih!`;
+
+            Swal.fire({
+                title: 'Booking Berhasil Dicatat!',
+                html: `Terima kasih <b>${name}</b>.<br>Anda akan diarahkan ke WhatsApp untuk mengirimkan konfirmasi booking ke nomor <b>${appData.contactPhone}</b>.`,
+                icon: 'success',
+                confirmButtonColor: '#f59e0b',
+                confirmButtonText: 'Kirim WhatsApp Sekarang'
+            }).then(() => {
+                window.open(`https://wa.me/${waNumber}?text=${waText}`, '_blank');
+                document.getElementById('bookingForm').reset();
+                updateAvailableTimes();
+                calculateEstimatedTotal();
+            });
+        }
+
+        function openBookingLinkModal() {
+            document.getElementById('bookingLinkModal').classList.remove('hidden');
+            document.getElementById('bookingLinkModal').classList.add('flex');
+        }
+        function closeBookingLinkModal() {
+            document.getElementById('bookingLinkModal').classList.remove('flex');
+            document.getElementById('bookingLinkModal').classList.add('hidden');
+        }
+        function copyShareableLink() {
+            const input = document.getElementById('shareableLinkInput');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan disalin ke clipboard!', showConfirmButton: false, timer: 1500 });
+        }
+
+        // VERIFIKASI KEAMANAN ADMIN (Hanya nomor 082134996297)
+        function verifyAdminAccess() {
+            Swal.fire({
+                title: 'Verifikasi Admin',
+                text: 'Masukkan nomor WhatsApp Admin yang berhak mengedit aplikasi:',
+                input: 'text',
+                inputPlaceholder: 'Contoh: 082134996297',
+                confirmButtonColor: '#f59e0b',
+                showCancelButton: true,
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.value) {
+                    // Membersihkan spasi atau format nomor
+                    const entered = result.value.trim();
+                    if (entered === '082134996297' || entered === '6282134996297') {
+                        openAdminModal();
+                    } else {
+                        Swal.fire('Akses Ditolak', 'Nomor tidak dikenali sebagai admin resmi.', 'error');
+                    }
+                }
+            });
+        }
+
+        function openAdminModal() {
+            renderAdminBarbers();
+            renderAdminPricelist();
+            renderAdminBookings();
+            document.getElementById('adminBookingCount').innerText = appData.bookings.length;
+            document.getElementById('adminModal').classList.remove('hidden');
+            document.getElementById('adminModal').classList.add('flex');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('flex');
+            document.getElementById('adminModal').classList.add('hidden');
+            updateBrandDisplay();
+            renderBarbers();
+            renderPricelist();
+            renderPromos();
+            populateBarberSelect();
+            populateBookingServices();
+        }
+
+        function switchAdminTab(tabName) {
+            ['generalTab', 'barbersTab', 'pricelistTab', 'bookingsTab'].forEach(t => {
+                document.getElementById('content' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+                document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.remove('border-amber-500', 'text-amber-500');
+                document.getElementById('btn' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('border-transparent', 'text-zinc-400');
+            });
+            document.getElementById('content' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.remove('hidden');
+            document.getElementById('btn' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.remove('border-transparent', 'text-zinc-400');
+            document.getElementById('btn' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('border-amber-500', 'text-amber-500');
+        }
+
+        function renderAdminBarbers() {
+            const container = document.getElementById('adminBarbersContainer');
+            container.innerHTML = appData.barbers.map((b, idx) => `
+                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="text-[10px] text-zinc-400 uppercase font-bold">Nama Kapster</label>
+                            <input type="text" id="adminBarberName_${idx}" value="${b.name}" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-400 uppercase font-bold">Jam Mulai (Available)</label>
+                            <input type="text" id="adminBarberTime_${idx}" value="${b.availableTime}" placeholder="12:00" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 font-mono">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-zinc-400 uppercase font-bold">Spesialisasi</label>
+                            <input type="text" id="adminBarberSpec_${idx}" value="${b.specialty}" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-zinc-400 uppercase font-bold">URL Foto (Kosongkan jika ingin tanpa foto)</label>
+                        <input type="text" id="adminBarberPhoto_${idx}" value="${b.photo}" class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 font-mono">
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="removeBarber(${idx})" class="text-xs text-red-400 hover:text-red-300 font-semibold"><i class="fa-solid fa-trash mr-1"></i> Hapus Kapster</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addBarberItem() {
+            appData.barbers.push({
+                id: 'barber_' + Date.now(),
+                name: 'Kapster Baru',
+                specialty: 'General Cut',
+                availableTime: '10:00',
+                photo: ''
+            });
+            renderAdminBarbers();
+        }
+
+        function removeBarber(idx) {
+            appData.barbers.splice(idx, 1);
+            renderAdminBarbers();
+        }
+
+        function renderAdminPricelist() {
+            const container = document.getElementById('adminPricelistContainer');
+            let html = '';
+            appData.pricelist.forEach((cat, catIdx) => {
+                html += `
+                    <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <input type="text" id="adminCatName_${catIdx}" value="${cat.category}" class="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-1.5 text-xs font-bold text-amber-400">
+                            <button onclick="addPricelistItemToCat(${catIdx})" class="text-xs text-amber-400 hover:underline">+ Tambah Layanan</button>
+                        </div>
+                        <div class="space-y-2 pl-2 border-l border-zinc-800">
+                            ${cat.items.map((item, itemIdx) => `
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center bg-zinc-900/60 p-2 rounded-xl">
+                                    <div class="sm:col-span-4">
+                                        <input type="text" id="adminItemName_${catIdx}_${itemIdx}" value="${item.name}" placeholder="Nama Layanan" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs">
+                                    </div>
+                                    <div class="sm:col-span-3">
+                                        <input type="number" id="adminItemPrice_${catIdx}_${itemIdx}" value="${item.price}" placeholder="Harga (Rp)" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <input type="number" id="adminItemDur_${catIdx}_${itemIdx}" value="${item.duration}" placeholder="Menit" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs font-mono">
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <input type="text" id="adminItemDesc_${catIdx}_${itemIdx}" value="${item.desc}" placeholder="Deskripsi" class="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-2.5 py-1.5 text-xs">
+                                    </div>
+                                    <div class="sm:col-span-1 text-center">
+                                        <button onclick="removePricelistItem(${catIdx},${itemIdx})" class="text-red-400 hover:text-red-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function addPricelistItem() {
+            if(appData.pricelist.length === 0) {
+                appData.pricelist.push({ category: 'Hair Cut', items: [] });
+            }
+            appData.pricelist[0].items.push({ name: 'Layanan Baru', price: 50000, duration: 30, desc: 'Deskripsi layanan' });
+            renderAdminPricelist();
+        }
+
+        function addPricelistItemToCat(catIdx) {
+            appData.pricelist[catIdx].items.push({ name: 'Layanan Baru', price: 50000, duration: 30, desc: 'Deskripsi layanan' });
+            renderAdminPricelist();
+        }
+
+        function removePricelistItem(catIdx, itemIdx) {
+            appData.pricelist[catIdx].items.splice(itemIdx, 1);
+            renderAdminPricelist();
+        }
+
+        function renderAdminBookings() {
+            const container = document.getElementById('adminBookingsContainer');
+            if (appData.bookings.length === 0) {
+                container.innerHTML = `<p class="text-xs text-zinc-500 text-center py-6">Belum ada riwayat booking masuk.</p>`;
+                return;
+            }
+            container.innerHTML = appData.bookings.map((b, idx) => `
+                <div class="bg-zinc-950 border border-zinc-800 rounded-2xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-sm text-amber-400">${b.name}</span>
+                            <span class="text-xs bg-zinc-900 text-zinc-400 px-2 py-0.5 rounded font-mono">${b.phone}</span>
+                        </div>
+                        <div class="text-xs text-zinc-300">
+                            Kapster: <b class="text-white">${b.barberName}</b> | Tanggal: <b class="text-white">${b.date}</b> (${b.timeSlot})
+                        </div>
+                        <div class="text-xs text-zinc-400">
+                            Layanan: ${b.services.join(', ')} • <b class="text-amber-500">Rp ${b.totalPrice.toLocaleString('id-ID')}</b>
+                        </div>
+                    </div>
+                    <button onclick="deleteBooking(${idx})" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-xl"><i class="fa-solid fa-trash mr-1"></i> Hapus</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteBooking(idx) {
+            appData.bookings.splice(idx, 1);
+            saveData();
+            renderAdminBookings();
+            document.getElementById('adminBookingCount').innerText = appData.bookings.length;
+        }
+
+        function clearAllBookings() {
+            Swal.fire({
+                title: 'Hapus semua riwayat?',
+                text: 'Tindakan ini tidak dapat dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#3f3f46',
+                confirmButtonText: 'Ya, Hapus'
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    appData.bookings = [];
+                    saveData();
+                    renderAdminBookings();
+                    document.getElementById('adminBookingCount').innerText = 0;
+                    Swal.fire('Terhapus!', 'Semua riwayat booking dibersihkan.', 'success');
+                }
+            });
+        }
+
+        function saveAdminChanges() {
+            const phoneInput = document.getElementById('adminContactPhone');
+            if(phoneInput) appData.contactPhone = phoneInput.value;
+
+            appData.barbers.forEach((b, idx) => {
+                const nameInput = document.getElementById(`adminBarberName_${idx}`);
+                const timeInput = document.getElementById(`adminBarberTime_${idx}`);
+                const specInput = document.getElementById(`adminBarberSpec_${idx}`);
+                const photoInput = document.getElementById(`adminBarberPhoto_${idx}`);
+                if(nameInput) b.name = nameInput.value;
+                if(timeInput) b.availableTime = timeInput.value;
+                if(specInput) b.specialty = specInput.value;
+                if(photoInput) b.photo = photoInput.value;
+            });
+
+            appData.pricelist.forEach((cat, catIdx) => {
+                const catNameInput = document.getElementById(`adminCatName_${catIdx}`);
+                if(catNameInput) cat.category = catNameInput.value;
+
+                cat.items.forEach((item, itemIdx) => {
+                    const nameIn = document.getElementById(`adminItemName_${catIdx}_${itemIdx}`);
+                    const priceIn = document.getElementById(`adminItemPrice_${catIdx}_${itemIdx}`);
+                    const durIn = document.getElementById(`adminItemDur_${catIdx}_${itemIdx}`);
+                    const descIn = document.getElementById(`adminItemDesc_${catIdx}_${itemIdx}`);
+                    if(nameIn) item.name = nameIn.value;
+                    if(priceIn) item.price = parseInt(priceIn.value) || 0;
+                    if(durIn) item.duration = parseInt(durIn.value) || 30;
+                    if(descIn) item.desc = descIn.value;
+                });
+            });
+
+            saveData();
+            closeAdminModal();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Perubahan berhasil disimpan!', showConfirmButton: false, timer: 1500 });
+        }
+
+        function resetDataToDefault() {
+            Swal.fire({
+                title: 'Reset ke data default?',
+                text: 'Semua perubahan kustom akan kembali seperti semula.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#3f3f46',
+                confirmButtonText: 'Ya, Reset'
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    appData = JSON.parse(JSON.stringify(defaultData));
+                    saveData();
+                    closeAdminModal();
+                    Swal.fire('Berhasil!', 'Data dikembalikan ke pengaturan awal.', 'success');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
